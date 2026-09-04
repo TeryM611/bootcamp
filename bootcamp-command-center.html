@@ -1,0 +1,1035 @@
+<title>CTF Bootcamp · Command Center</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --ink: #0d1017;
+    --ink-2: #10151d;
+    --panel: #151a22;
+    --panel-2: #1b222c;
+    --line: #262f3b;
+    --line-soft: #1e2732;
+    --fg: #e6ebf2;
+    --fg-dim: #9aa7b8;
+    --fg-faint: #64717f;
+    --signal: #f5a623;
+    --signal-ink: #1a1204;
+    --signal-2: #56c7b4;
+    --easy: #3fb950;
+    --medium: #d9a441;
+    --hard: #f0554b;
+    --info: #6ea8fe;
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --maxw: 1080px;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --ink: #f6f3ec;
+      --ink-2: #efe9dd;
+      --panel: #fffdf8;
+      --panel-2: #f3eee3;
+      --line: #ddd4c2;
+      --line-soft: #e7e0d1;
+      --fg: #211d15;
+      --fg-dim: #5c5545;
+      --fg-faint: #8a8271;
+      --signal: #c9791a;
+      --signal-ink: #fff6e8;
+      --signal-2: #1f8f7d;
+      --easy: #2f9e42;
+      --medium: #b7791f;
+      --hard: #d23b31;
+      --info: #2c6fd6;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ink: #0d1017; --ink-2: #10151d; --panel: #151a22; --panel-2: #1b222c;
+    --line: #262f3b; --line-soft: #1e2732; --fg: #e6ebf2; --fg-dim: #9aa7b8; --fg-faint: #64717f;
+    --signal: #f5a623; --signal-ink: #1a1204; --signal-2: #56c7b4;
+    --easy: #3fb950; --medium: #d9a441; --hard: #f0554b; --info: #6ea8fe;
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --ink: #f6f3ec; --ink-2: #efe9dd; --panel: #fffdf8; --panel-2: #f3eee3;
+    --line: #ddd4c2; --line-soft: #e7e0d1; --fg: #211d15; --fg-dim: #5c5545; --fg-faint: #8a8271;
+    --signal: #c9791a; --signal-ink: #fff6e8; --signal-2: #1f8f7d;
+    --easy: #2f9e42; --medium: #b7791f; --hard: #d23b31; --info: #2c6fd6;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .wrap-bg {
+    background: var(--ink);
+    color: var(--fg);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .shell { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  a { color: var(--signal-2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--fg-faint);
+  }
+  .accent { color: var(--signal); }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(120% 90% at 85% -10%, color-mix(in srgb, var(--signal) 16%, transparent), transparent 60%),
+      linear-gradient(180deg, var(--ink-2), var(--ink));
+    padding: 20px 0 56px;
+  }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0; gap: 16px;
+  }
+  .brand { font-family: var(--mono); font-size: 13px; letter-spacing: .08em; color: var(--fg-dim); }
+  .brand b { color: var(--fg); }
+  .flag-mark { color: var(--signal); }
+  .theme-btn {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
+    color: var(--fg-dim); background: transparent;
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 7px 14px; cursor: pointer; transition: border-color .2s, color .2s;
+  }
+  .theme-btn:hover { color: var(--fg); border-color: var(--signal); }
+
+  .terminal {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--fg-dim);
+    background: color-mix(in srgb, var(--panel) 70%, transparent);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 16px;
+    max-width: 520px;
+    margin-top: 28px;
+  }
+  .terminal .prompt { color: var(--signal-2); }
+  .cursor {
+    display: inline-block; width: 8px; height: 15px; margin-left: 2px;
+    background: var(--signal); vertical-align: -2px;
+    animation: blink 1.05s steps(2, start) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  h1.title {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: clamp(34px, 6vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 20px 0 0;
+    text-wrap: balance;
+  }
+  h1.title .flag { color: var(--signal); }
+  .lede {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--fg-dim);
+    max-width: 60ch;
+    margin: 20px 0 0;
+  }
+  .hero-meta {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px;
+  }
+  .chip {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .04em;
+    border: 1px solid var(--line); border-radius: 8px;
+    padding: 8px 12px; color: var(--fg-dim);
+    background: color-mix(in srgb, var(--panel) 50%, transparent);
+  }
+  .chip b { color: var(--fg); }
+
+  /* ---------- SECTION ---------- */
+  section { padding: 56px 0; border-bottom: 1px solid var(--line-soft); }
+  .sec-head { margin-bottom: 28px; }
+  .sec-head h2 {
+    font-family: var(--mono); font-weight: 700;
+    font-size: clamp(22px, 3.4vw, 32px); letter-spacing: -0.01em;
+    margin: 8px 0 0;
+  }
+  .sec-head p { color: var(--fg-dim); margin: 10px 0 0; max-width: 62ch; }
+
+  /* ---------- TIMELINE ---------- */
+  .timeline { display: grid; gap: 14px; }
+  .tl-item {
+    display: grid; grid-template-columns: 64px 1fr; gap: 18px;
+    align-items: stretch;
+    border: 1px solid var(--line); border-radius: 14px;
+    background: var(--panel);
+    overflow: hidden;
+    transition: border-color .2s, transform .2s;
+  }
+  .tl-item:hover { border-color: color-mix(in srgb, var(--signal) 60%, var(--line)); }
+  .tl-num {
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-weight: 700; font-size: 20px;
+    color: var(--signal-ink); background: var(--signal);
+    writing-mode: initial;
+  }
+  .tl-body { padding: 18px 20px 18px 0; }
+  .tl-body .wk { font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--fg-faint); }
+  .tl-body h3 { margin: 4px 0 6px; font-size: 18px; letter-spacing: -0.01em; }
+  .tl-body p { margin: 0; color: var(--fg-dim); font-size: 14.5px; }
+  .tl-body .goal { margin-top: 10px; font-size: 13px; color: var(--fg-faint); font-family: var(--mono); }
+
+  /* ---------- WEEK TABS ---------- */
+  .tabs {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px;
+    position: sticky; top: 0; z-index: 5;
+    padding: 14px 0;
+    background: linear-gradient(180deg, var(--ink) 70%, transparent);
+  }
+  .tab {
+    font-family: var(--mono); font-size: 13px; letter-spacing: .02em;
+    border: 1px solid var(--line); border-radius: 10px;
+    background: var(--panel); color: var(--fg-dim);
+    padding: 10px 16px; cursor: pointer;
+    transition: all .18s;
+  }
+  .tab:hover { color: var(--fg); border-color: var(--fg-faint); }
+  .tab[aria-selected="true"] {
+    color: var(--signal-ink); background: var(--signal);
+    border-color: var(--signal); font-weight: 700;
+  }
+  .tab .tnum { opacity: .7; }
+  .tab[aria-selected="true"] .tnum { opacity: 1; }
+
+  /* ---------- SLIDE DECK ---------- */
+  .deck-frame {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background:
+      radial-gradient(120% 100% at 100% 0%, color-mix(in srgb, var(--signal) 8%, transparent), transparent 55%),
+      var(--panel);
+    overflow: hidden;
+  }
+  .deck-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-bottom: 1px solid var(--line);
+    background: var(--panel-2);
+    font-family: var(--mono); font-size: 12px; color: var(--fg-faint);
+  }
+  .dots-row { display: flex; gap: 4px; }
+  .win-dots { display: flex; gap: 6px; margin-right: 8px; }
+  .win-dots i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .win-dots i:nth-child(1) { background: #f0554b; }
+  .win-dots i:nth-child(2) { background: #f5a623; }
+  .win-dots i:nth-child(3) { background: #3fb950; }
+  .deck-file { letter-spacing: .04em; }
+
+  .slide {
+    padding: clamp(26px, 4.5vw, 52px);
+    min-height: 400px;
+    display: none;
+    animation: slidein .32s ease both;
+  }
+  .slide.active { display: block; }
+  @keyframes slidein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .slide .kicker {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--signal);
+  }
+  .slide h3.stitle {
+    font-family: var(--mono); font-weight: 700;
+    font-size: clamp(22px, 3.6vw, 34px); letter-spacing: -0.015em;
+    margin: 12px 0 20px; text-wrap: balance; line-height: 1.1;
+  }
+  .slide .sub { color: var(--fg-dim); font-size: 16px; margin: -8px 0 20px; max-width: 64ch; }
+  .slide ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+  .slide li {
+    position: relative; padding-left: 30px; color: var(--fg);
+    font-size: 15.5px; max-width: 70ch;
+  }
+  .slide li::before {
+    content: ""; position: absolute; left: 4px; top: 9px;
+    width: 8px; height: 8px; background: var(--signal-2);
+    transform: rotate(45deg);
+  }
+  .slide li b { color: var(--fg); }
+  .slide li code, .slide p code, .callout code {
+    font-family: var(--mono); font-size: 13.5px;
+    background: color-mix(in srgb, var(--signal-2) 14%, transparent);
+    color: var(--fg); padding: 1px 6px; border-radius: 5px;
+  }
+  .slide .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .callout {
+    margin-top: 22px; border-left: 3px solid var(--signal);
+    background: color-mix(in srgb, var(--signal) 9%, transparent);
+    padding: 14px 18px; border-radius: 0 10px 10px 0;
+    font-size: 14.5px; color: var(--fg-dim);
+  }
+  .callout b { color: var(--signal); font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .kv { font-family: var(--mono); font-size: 13.5px; display: grid; gap: 8px; }
+  .kv div { display: grid; grid-template-columns: 92px 1fr; gap: 12px; align-items: baseline; }
+  .kv .k { color: var(--signal); }
+  .kv .v { color: var(--fg-dim); }
+
+  .title-slide { display: flex; flex-direction: column; justify-content: center; }
+  .title-slide .big {
+    font-family: var(--mono); font-weight: 700;
+    font-size: clamp(30px, 5.5vw, 52px); line-height: 1.03;
+    letter-spacing: -0.02em; margin: 14px 0 0; text-wrap: balance;
+  }
+  .title-slide .big .accent2 { color: var(--signal); }
+
+  .deck-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-top: 1px solid var(--line); background: var(--panel-2);
+  }
+  .nav-btns { display: flex; gap: 8px; }
+  .nbtn {
+    font-family: var(--mono); font-size: 13px;
+    border: 1px solid var(--line); border-radius: 9px;
+    background: var(--panel); color: var(--fg);
+    padding: 8px 16px; cursor: pointer; transition: all .16s;
+  }
+  .nbtn:hover:not(:disabled) { border-color: var(--signal); color: var(--signal); }
+  .nbtn:disabled { opacity: .35; cursor: not-allowed; }
+  .nbtn.present { background: var(--signal); color: var(--signal-ink); border-color: var(--signal); font-weight: 700; }
+  .nbtn.present:hover { color: var(--signal-ink); filter: brightness(1.05); }
+  .slide-count { font-family: var(--mono); font-size: 12px; color: var(--fg-faint); letter-spacing: .08em; font-variant-numeric: tabular-nums; }
+  .progress { display: flex; gap: 5px; }
+  .progress i {
+    width: 22px; height: 4px; border-radius: 2px; background: var(--line);
+    cursor: pointer; transition: background .2s;
+  }
+  .progress i.on { background: var(--signal); }
+  .progress i.seen { background: var(--fg-faint); }
+
+  /* ---------- ROOMS ---------- */
+  .rooms-head {
+    display: flex; align-items: baseline; gap: 12px; margin: 40px 0 18px;
+  }
+  .rooms-head h3 { font-family: var(--mono); font-size: 18px; margin: 0; }
+  .rooms-head span { font-size: 13px; color: var(--fg-faint); font-family: var(--mono); }
+  .rooms { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .room {
+    display: block; border: 1px solid var(--line); border-radius: 12px;
+    background: var(--panel); padding: 16px 18px;
+    transition: border-color .18s, transform .18s, background .18s;
+  }
+  .room:hover { border-color: var(--signal-2); transform: translateY(-2px); text-decoration: none; background: var(--panel-2); }
+  .room-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+  .room-name { font-family: var(--mono); font-weight: 700; font-size: 15px; color: var(--fg); }
+  .room:hover .room-name { color: var(--signal-2); }
+  .room-blurb { font-size: 14px; color: var(--fg-dim); margin: 0; }
+  .room-slug { font-family: var(--mono); font-size: 11.5px; color: var(--fg-faint); margin-top: 10px; letter-spacing: .02em; }
+  .diff {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 999px; white-space: nowrap; font-weight: 700;
+  }
+  .diff.easy { color: var(--easy); background: color-mix(in srgb, var(--easy) 15%, transparent); }
+  .diff.medium { color: var(--medium); background: color-mix(in srgb, var(--medium) 16%, transparent); }
+  .diff.hard { color: var(--hard); background: color-mix(in srgb, var(--hard) 15%, transparent); }
+  .diff.info { color: var(--info); background: color-mix(in srgb, var(--info) 15%, transparent); }
+  .stretch-note { margin-top: 12px; font-size: 12.5px; color: var(--fg-faint); font-family: var(--mono); }
+
+  /* ---------- FOOTER ---------- */
+  footer { padding: 48px 0 64px; }
+  .fac-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px; }
+  .fac {
+    border: 1px solid var(--line); border-radius: 12px; background: var(--panel);
+    padding: 16px 18px;
+  }
+  .fac b { display: block; font-family: var(--mono); font-size: 13px; color: var(--signal); margin-bottom: 5px; }
+  .fac p { margin: 0; font-size: 14px; color: var(--fg-dim); }
+  .signoff { margin-top: 40px; font-family: var(--mono); font-size: 12.5px; color: var(--fg-faint); letter-spacing: .04em; }
+
+  /* ---------- PRESENT / FULLSCREEN ---------- */
+  /* Native fullscreen (works when the host allows it) */
+  .deck-frame:fullscreen { border-radius: 0; display: flex; flex-direction: column; background: var(--ink); }
+  .deck-frame:fullscreen #slides { flex: 1; display: flex; flex-direction: column; justify-content: center; overflow: auto; }
+  .deck-frame:fullscreen .slide { padding: min(9vh, 80px) min(10vw, 130px); }
+  .deck-frame:fullscreen .slide h3.stitle { font-size: clamp(30px, 5vw, 52px); }
+  .deck-frame:fullscreen .slide li { font-size: clamp(17px, 2.1vw, 24px); }
+
+  /* In-page present mode (fallback when the iframe blocks fullscreen) */
+  .deck-frame.presenting {
+    position: fixed; inset: 0; z-index: 9999; border-radius: 0;
+    display: flex; flex-direction: column; background: var(--ink);
+  }
+  .deck-frame.presenting #slides { flex: 1; display: flex; flex-direction: column; justify-content: center; overflow: auto; }
+  .deck-frame.presenting .slide { padding: min(7vh, 70px) min(9vw, 120px); }
+  .deck-frame.presenting .slide h3.stitle { font-size: clamp(26px, 4.4vw, 48px); }
+  .deck-frame.presenting .slide li { font-size: clamp(16px, 1.9vw, 22px); }
+  .deck-frame.presenting .slide .big { font-size: clamp(34px, 6vw, 62px); }
+
+  @media (max-width: 720px) {
+    .slide .cols { grid-template-columns: 1fr; gap: 16px; }
+    .rooms { grid-template-columns: 1fr; }
+    .fac-grid { grid-template-columns: 1fr; }
+    .tl-item { grid-template-columns: 52px 1fr; }
+    .kv div { grid-template-columns: 78px 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cursor { animation: none; }
+    .slide { animation: none; }
+    .room:hover { transform: none; }
+  }
+</style>
+
+<div class="wrap-bg">
+  <!-- HERO -->
+  <header class="hero">
+    <div class="shell">
+      <div class="topbar">
+        <div class="brand"><span class="flag-mark">▚</span> <b>THM Bootcamp</b> · Command Center</div>
+        <button class="theme-btn" id="themeBtn" type="button">◐ Theme</button>
+      </div>
+      <div class="eyebrow">TryHackMe Ambassador Program · 4-Week Beginner Bootcamp</div>
+      <h1 class="title">From <span class="flag">zero</span><br>to <span class="flag">flag</span>.</h1>
+      <p class="lede">A four-week bootcamp for people who are curious about cybersecurity but feel locked out of it. We start at the terminal prompt and finish at your first captured flag — no experience required.</p>
+      <div class="terminal">
+        <span class="prompt">recruit@thm</span>:<span style="color:var(--signal)">~</span>$ ./start_bootcamp.sh --level absolute-beginner<span class="cursor"></span>
+      </div>
+      <div class="hero-meta">
+        <span class="chip"><b>4</b> weeks</span>
+        <span class="chip"><b>~30 min</b> taught + hands-on labs</span>
+        <span class="chip"><b>Full</b> TryHackMe access</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- AGENDA -->
+  <section id="agenda">
+    <div class="shell">
+      <div class="sec-head">
+        <h2>The 4-week map</h2>
+        <p>Each week is one session: about 30 minutes of taught content, a live walkthrough together, then guided practice in TryHackMe rooms. Momentum compounds — every week builds directly on the last.</p>
+      </div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </section>
+
+  <!-- SESSIONS -->
+  <section id="sessions">
+    <div class="shell">
+      <div class="sec-head">
+        <h2>Run the session</h2>
+        <p>Pick a week to open its slide deck and the TryHackMe rooms assigned for practice. Use <b>Present</b> for fullscreen, and the <b>←</b> / <b>→</b> arrow keys to move through slides.</p>
+      </div>
+
+      <div class="tabs" id="tabs" role="tablist" aria-label="Bootcamp weeks"></div>
+
+      <div class="deck-frame" id="deckFrame">
+        <div class="deck-bar">
+          <div style="display:flex;align-items:center">
+            <span class="win-dots"><i></i><i></i><i></i></span>
+            <span class="deck-file" id="deckFile">week1_briefing.md</span>
+          </div>
+          <span id="deckTag">SESSION 01</span>
+        </div>
+        <div id="slides"></div>
+        <div class="deck-nav">
+          <div class="nav-btns">
+            <button class="nbtn" id="prevBtn" type="button">← Prev</button>
+            <button class="nbtn" id="nextBtn" type="button">Next →</button>
+          </div>
+          <div class="progress" id="progress" aria-hidden="true"></div>
+          <div style="display:flex;align-items:center;gap:14px">
+            <span class="slide-count" id="slideCount">01 / 08</span>
+            <button class="nbtn present" id="presentBtn" type="button">⛶ Present</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="rooms-head">
+        <h3 id="roomsTitle">Assigned rooms</h3>
+        <span id="roomsSub">practice what you just learned</span>
+      </div>
+      <div class="rooms" id="rooms"></div>
+      <p class="stretch-note" id="stretchNote"></p>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var WEEKS = [
+    {
+      n: 1,
+      file: "week1_briefing.md",
+      tag: "SESSION 01",
+      short: "Base Camp",
+      title: "Base Camp: Cyber, Linux &amp; the CTF Mindset",
+      blurb: "Get oriented, meet TryHackMe, learn how CTFs actually work, and get comfortable on the Linux command line.",
+      goal: "GOAL → everyone set up on THM &amp; comfortable in the terminal",
+      slides: [
+        { kicker: "Session 01",
+          title: 'Welcome to <span class="accent2">Base Camp</span>',
+          sub: "You do not need to already be a hacker to be here. That is the entire point. Today we set up, learn the rules of the game, and take our first steps in the terminal." },
+        { kicker: "The Game", title: "What is a CTF?",
+          sub: "Capture The Flag: a security game where you solve challenges to find hidden strings called <b>flags</b> — they look like <code>flag{y0u_did_it}</code>.",
+          bullets: [
+            "<b>Jeopardy-style</b> — a board of standalone challenges, each worth points. This is where you'll start.",
+            "<b>Attack &amp; Defense</b> — teams attack each other's machines while defending their own.",
+            "The friendliest way to learn security: you're always <i>doing</i>, never just reading.",
+            "Getting stuck is the job. The skill is what you do next — not already knowing the answer."
+          ] },
+        { kicker: "The Categories", title: "The flavors of a challenge",
+          sub: "Every flag lives in one of these worlds. This bootcamp gives you a foothold in each.",
+          kv: [
+            ["web", "Exploiting websites &amp; apps"],
+            ["recon", "Finding open doors: ports, services, hidden files"],
+            ["crypto", "Breaking or decoding weak encryption &amp; hashes"],
+            ["forensics", "Digging evidence out of files, images &amp; traffic"],
+            ["osint", "Open-source intel — hacking with a search engine"],
+            ["pwn / rev", "Binary exploitation &amp; reverse engineering"]
+          ] },
+        { kicker: "Your Arena", title: "How TryHackMe works",
+          cols: true,
+          colA: { h: "The building blocks", bullets: [
+            "<b>Rooms</b> = lessons. Read a task, do it, submit the <b>flag</b> to advance.",
+            "Earn points &amp; streaks.",
+            "Everything runs in your browser. Nothing to install."
+          ]},
+          colB: { h: "Two ways to connect", bullets: [
+            "<b>AttackBox</b> — a hacking machine in your browser. Click <i>Start</i>, go. Easiest.",
+            "<b>OpenVPN</b> — connect your own Kali/Linux VM to the THM network. (Optional)",
+            "Start every room by pressing <b>Start Machine</b> and waiting for the target IP."
+          ]},
+          callout: { label: "Do this now", text: 'Create a free account at <code>tryhackme.com</code> <b>Tutorial</b> Room with me.' } },
+        { kicker: "The Real Skill", title: "The hacker mindset",
+          sub: "Tools are learnable in an afternoon. This is the part that actually makes a hacker.",
+          bullets: [
+            "<b>Enumerate everything.</b> Look harder than feels reasonable. The answer is usually already on screen.",
+            "<b>Be methodical.</b> Take notes as you go — what you tried, what you found, what's left.",
+            "<b>Google shamelessly.</b> Every pro has 30 tabs open. Searching is a core skill, not cheating.",
+            "<b>Stay curious, not frustrated.</b> \"That's weird — why?\" is the sound of progress."
+          ] },
+        { kicker: "Home Turf", title: "Meet Linux",
+          sub: "Nearly all security tooling lives on Linux, and most targets run it. The terminal is your cockpit.",
+          bullets: [
+            "The filesystem is a tree from <code>/</code> (root). Your stuff lives in <code>/home/you</code>.",
+            "The <b>shell</b> takes typed commands and runs them — faster and more precise than any GUI.",
+            "<code>~</code> means your home directory. A path is just an address, like <code>/etc/passwd</code>.",
+            "You will not break anything by looking. Explore freely."
+          ] },
+        { kicker: "Muscle Memory", title: "The commands you'll use hourly",
+          kv: [
+            ["ls -la", "list files, including hidden ones (names starting with a dot)"],
+            ["cd", "change directory · <code>cd ..</code> goes up one level"],
+            ["pwd", "print working directory — \"where am I?\""],
+            ["cat", "print a file's contents (flags love to hide in files)"],
+            ["grep", "search text for a pattern · <code>grep flag file.txt</code>"],
+            ["find", "locate files by name/type across the system"],
+            ["man", "the manual for any command · <code>man ls</code>"]
+          ],
+          callout: { label: "Pro move", text: "When a command confuses you, run <code>man &lt;command&gt;</code> or add <code>--help</code>. The answer is built in." } },
+        { kicker: "Wrap-up", title: "This week's missions",
+          sub: "Your flags to capture before Week 2. Pair up and post wins in the channel.",
+          bullets: [
+            "<b>Get set up:</b> account created, Tutorial room done, AttackBox launched once.",
+            "<b>Live in the terminal:</b> complete Linux Fundamentals Parts 1–3.",
+            "<b>Start a notes doc</b> (Obsidian, a doc, anything) — you'll thank yourself in Week 4.",
+            "Next week → <b>Recon:</b> how networks talk, and mapping a target with Nmap."
+          ],
+          callout: { label: "Remember", text: "Stuck for more than 15 minutes? Ask. Getting unstuck together is what a team is for." } }
+      ],
+      rooms: [
+        { name: "Tutorial", diff: "info", slug: "tryhackme.com/room/tutorial", blurb: "Learn the THM interface and submit your very first flag." },
+        { name: "Starting Out in Cyber Security", diff: "info", slug: "tryhackme.com/room/startingoutincybersec", blurb: "A gentle orientation to the field and where CTFs fit in." },
+        { name: "Linux Fundamentals Part 1", diff: "easy", slug: "tryhackme.com/room/linuxfundamentalspart1", blurb: "Your first steps in the Linux terminal — in-browser, no setup." },
+        { name: "Linux Fundamentals Part 2", diff: "easy", slug: "tryhackme.com/room/linuxfundamentalspart2", blurb: "SSH in, flags &amp; switches, permissions, and moving around." },
+        { name: "Linux Fundamentals Part 3", diff: "easy", slug: "tryhackme.com/room/linuxfundamentalspart3", blurb: "Editing files, processes, cron, and packages. Terminal fluency." },
+        { name: "Introductory Researching", diff: "optional", slug: "tryhackme.com/room/introtoresearch", blurb: "Because knowing how to search is a superpower." }
+      ],
+      
+    },
+
+    {
+      n: 2,
+      file: "week2_briefing.md",
+      tag: "SESSION 02",
+      short: "Recon",
+      title: "Recon: Networking &amp; Enumeration",
+      blurb: "Learn how networks talk, what ports and services are, and how to map a target with Nmap.",
+      goal: "GOAL → enumerate a target and read its open doors",
+      slides: [
+        { type: "title", kicker: "Session 02",
+          big: 'You can\'t hack what you<br>can\'t <span class="accent2">see</span>',
+          sub: "Before any exploit comes reconnaissance. Today: how machines talk to each other, and how to knock on every door a target has open." },
+        { kicker: "The Basics", title: "How networks talk",
+          sub: "Every machine on a network has an <b>address</b>, and every service on it listens on a numbered <b>port</b>.",
+          bullets: [
+            "<b>IP address</b> — a machine's address, like <code>10.10.14.2</code>. Your target gets one when you start it.",
+            "<b>Port</b> — a numbered door (0–65535). A web server listens on 80; SSH on 22.",
+            "<b>TCP</b> — reliable, connection-based (a phone call). <b>UDP</b> — fast, fire-and-forget (a postcard).",
+            "Client asks, server answers. Your AttackBox is the client; the target is the server."
+          ] },
+        { kicker: "The Handshake", title: "The TCP 3-way handshake",
+          sub: "How two machines agree to talk before any data flows — and why scanners care.",
+          kv: [
+            ["1. SYN", "client → server: \"Can we talk?\""],
+            ["2. SYN-ACK", "server → client: \"Yes, can you?\""],
+            ["3. ACK", "client → server: \"Yes — go.\" Connection open."]
+          ],
+          callout: { label: "Why it matters", text: "Nmap can spot an <b>open</b> port by how far this handshake gets — even without fully completing it." } },
+        { kicker: "Know the Doors", title: "Common ports &amp; services",
+          sub: "Memorize these. Seeing them in a scan instantly tells you what a target is running.",
+          kv: [
+            ["21 · FTP", "file transfer — often allows anonymous login"],
+            ["22 · SSH", "encrypted remote shell — a common foothold"],
+            ["25 · SMTP", "email sending"],
+            ["53 · DNS", "name → IP resolution"],
+            ["80 · HTTP", "web (unencrypted) — always investigate"],
+            ["443 · HTTPS", "web (encrypted)"],
+            ["445 · SMB", "Windows file sharing — a classic weak point"],
+            ["3389 · RDP", "Windows remote desktop"]
+          ] },
+        { kicker: "Two Approaches", title: "Passive vs. active recon",
+          cols: true,
+          colA: { h: "Passive", bullets: [
+            "Gather info <b>without touching</b> the target.",
+            "Search engines, WHOIS, DNS records, public data.",
+            "Quiet — the target never knows."
+          ]},
+          colB: { h: "Active", bullets: [
+            "<b>Directly interact</b> with the target.",
+            "Port scanning, banner grabbing, probing services.",
+            "Louder — but far more detailed. This is most CTF recon."
+          ]},
+          callout: { label: "Rule of engagement", text: "Only ever scan machines you own or are explicitly authorized to test — like THM targets. Never scan things in the wild." } },
+        { kicker: "The Tool", title: "Nmap — your first real weapon",
+          sub: "The Network Mapper. It tells you what's alive, what ports are open, and what's running on them.",
+          kv: [
+            ["nmap &lt;ip&gt;", "basic scan of the most common 1000 ports"],
+            ["-sV", "detect the <b>version</b> of each service (huge for finding exploits)"],
+            ["-sC", "run default enumeration scripts"],
+            ["-p-", "scan <b>all</b> 65535 ports (slower, thorough)"],
+            ["-A", "aggressive: version, scripts, OS detection in one"],
+            ["-oN file", "save results to a file for your notes"]
+          ],
+          callout: { label: "Go-to first scan", text: "<code>nmap -sC -sV -oN scan.txt &lt;target-ip&gt;</code> — a great opening move for almost any box." } },
+        { kicker: "Read the Map", title: "So the scan finished — now what?",
+          sub: "Recon output isn't the goal; it's a to-do list. Every open port is a lead to chase.",
+          bullets: [
+            "See <b>80/443</b>? → head to the website in a browser. That's Week 3.",
+            "See <b>21 FTP</b>? → try <code>ftp &lt;ip&gt;</code> and log in as <code>anonymous</code>.",
+            "See <b>22 SSH</b>? → note it; you'll likely need credentials found elsewhere.",
+            "See <b>445 SMB</b>? → enumerate shares — files are often left exposed.",
+            "<b>Enumerate the highest-value service first</b>, then work down the list."
+          ] },
+        { kicker: "Wrap-up", title: "This week's missions",
+          sub: "Turn theory into a real scan. Pair up and compare what you each find.",
+          bullets: [
+            "Understand the language: <b>What is Networking?</b> and <b>Intro to LAN</b>.",
+            "Poke real services in <b>Network Services</b> (SMB, Telnet, FTP).",
+            "The main event: run <b>Nmap</b> against live targets and read the output.",
+            "Next week → <b>Web Exploitation:</b> that port 80 you keep seeing? We break into it."
+          ],
+          callout: { label: "Note-taking habit", text: "For every target, write down: IP, open ports, service versions. This becomes your attack plan." } }
+      ],
+      rooms: [
+        { name: "What is Networking?", diff: "info", slug: "tryhackme.com/room/whatisnetworking", blurb: "The absolute basics of how devices connect and communicate." },
+        { name: "Intro to LAN", diff: "easy", slug: "tryhackme.com/room/introtolan", blurb: "Local networks, subnets, and how devices find each other." },
+        { name: "Network Services", diff: "easy", slug: "tryhackme.com/room/networkservices", blurb: "Enumerate and exploit SMB, Telnet, and FTP hands-on." },
+        { name: "Nmap", diff: "medium", slug: "tryhackme.com/room/furthernmap", blurb: "The definitive beginner Nmap room — scan types, flags, output." }
+      ],
+      stretch: "Stretch: Passive Reconnaissance · tryhackme.com/room/passiverecon — whois, dig, and gathering intel without touching the target."
+    },
+
+    {
+      n: 3,
+      file: "week3_briefing.md",
+      tag: "SESSION 03",
+      short: "Web",
+      title: "Web Exploitation",
+      blurb: "How the web really works, walking an application, content discovery, the OWASP Top 10, and Burp Suite.",
+      goal: "GOAL → find and exploit a real web vulnerability",
+      slides: [
+        { type: "title", kicker: "Session 03",
+          big: 'The web is the biggest<br><span class="accent2">attack surface</span> there is',
+          sub: "Most CTF flags — and most real breaches — start with a website. Today we learn how the web works under the hood, then break one." },
+        { kicker: "Under the Hood", title: "How the web actually works",
+          sub: "Every page you load is a <b>request</b> from your browser and a <b>response</b> from a server. Hacking the web means bending that conversation.",
+          bullets: [
+            "<b>Methods:</b> <code>GET</code> fetches, <code>POST</code> submits. Others exist and sometimes matter.",
+            "<b>Status codes:</b> <code>200</code> OK · <code>301/302</code> redirect · <code>403</code> forbidden · <code>404</code> not found · <code>500</code> server error.",
+            "<b>Headers</b> carry metadata; <b>cookies</b> carry your session (and are worth inspecting).",
+            "Open your browser's <b>Dev Tools</b> (F12) → Network tab to watch it all live."
+          ] },
+        { kicker: "Look First", title: "Walking an application",
+          sub: "Before any tool, just explore like a nosy user. Half of easy web flags are found by looking.",
+          bullets: [
+            "<b>View source</b> (Ctrl+U) — developers leave comments, hidden fields, and keys in the HTML.",
+            "Check <code>/robots.txt</code> and <code>/sitemap.xml</code> — they list paths the site would rather hide.",
+            "Read the <b>URL structure</b>: does <code>?id=1</code> become <code>?id=2</code>? (That's an IDOR lead.)",
+            "Inspect <b>cookies</b> and page behavior in Dev Tools. Curiosity finds flags."
+          ] },
+        { kicker: "Go Deeper", title: "Content discovery",
+          sub: "The pages linked in the menu are rarely the whole site. Hidden directories are where the good stuff lives.",
+          cols: true,
+          colA: { h: "Brute-force paths", bullets: [
+            "<b>Gobuster / ffuf</b> throw a wordlist at the site to find hidden dirs &amp; files.",
+            "<code>gobuster dir -u http://ip -w wordlist.txt</code>",
+            "<b>SecLists</b> is the wordlist collection everyone uses."
+          ]},
+          colB: { h: "Search-engine recon", bullets: [
+            "<b>Google dorking:</b> <code>site:</code>, <code>filetype:</code>, <code>inurl:</code> to find exposed pages.",
+            "Wappalyzer / page source reveals the tech stack.",
+            "Old backups like <code>/admin.bak</code> are surprisingly common."
+          ]} },
+        { kicker: "The Greatest Hits", title: "The OWASP Top 10",
+          sub: "The industry's list of the most critical web risks. You don't need all ten today — just recognize the pattern.",
+          kv: [
+            ["Broken Access", "seeing data/pages you shouldn't (IDOR)"],
+            ["Injection", "SQL &amp; command injection — untrusted input runs as code"],
+            ["ID &amp; Auth", "weak logins, guessable sessions"],
+            ["Misconfig", "default creds, verbose errors, exposed panels"],
+            ["Vuln Components", "outdated libraries with known exploits"]
+          ],
+          callout: { label: "The core idea", text: "Almost every web vuln = the app <b>trusting input it shouldn't</b>. Learn to think: \"what if I send something unexpected here?\"" } },
+        { kicker: "Deep Dive", title: "Two classics: IDOR &amp; SQLi",
+          cols: true,
+          colA: { h: "IDOR", bullets: [
+            "<b>Insecure Direct Object Reference.</b>",
+            "Change <code>account?id=1005</code> to <code>1006</code> → see someone else's data.",
+            "No hacking tools needed — just editing the URL."
+          ]},
+          colB: { h: "SQL Injection", bullets: [
+            "Input that breaks out into the database query.",
+            "<code>' OR 1=1 --</code> in a login can bypass it entirely.",
+            "Can dump whole databases — usernames, hashes, flags."
+          ]},
+          callout: { label: "Mindset", text: "You're not memorizing payloads — you're learning to ask \"does this input end up somewhere powerful?\"" } },
+        { kicker: "The Tool", title: "Burp Suite basics",
+          sub: "Burp sits between your browser and the target so you can see and edit every request before it's sent.",
+          kv: [
+            ["Proxy", "intercept requests — pause, read, and modify traffic"],
+            ["Repeater", "resend a request over &amp; over, tweaking it each time"],
+            ["Intruder", "automate sending many payloads (fuzzing)"],
+            ["Target", "map out the whole site as you browse it"]
+          ],
+          callout: { label: "First-time tip", text: "Set your browser proxy to <code>127.0.0.1:8080</code> (the THM room walks you through it). Intercept ON, browse, watch the requests appear." } },
+        { kicker: "Wrap-up", title: "This week's missions",
+          sub: "You now have the theory. These rooms are where it clicks. Save Pickle Rick for a reward.",
+          bullets: [
+            "Warm up: <b>Walking An Application</b> and <b>Content Discovery</b>.",
+            "See the vulns in action: <b>OWASP Top 10</b> (interactive, one per task).",
+            "Learn the tool: <b>Burp Suite: The Basics</b>.",
+            "For fun: <b>Pickle Rick</b> — a beloved beginner web CTF that ties it all together.",
+            "Next week → <b>Exploitation &amp; Privesc:</b> from a foothold all the way to root."
+          ] }
+      ],
+      rooms: [
+        { name: "Walking An Application", diff: "easy", slug: "tryhackme.com/room/walkinganapplication", blurb: "Use only your browser to manually find hidden web content." },
+        { name: "Content Discovery", diff: "easy", slug: "tryhackme.com/room/contentdiscovery", blurb: "Uncover hidden dirs &amp; files with gobuster, dorking, and more." },
+        { name: "OWASP Top 10", diff: "easy", slug: "tryhackme.com/module/owasp-top-10-2025", blurb: "Hands-on tasks for each of the top web vulnerabilities." },
+        { name: "Burp Suite: The Basics", diff: "easy", slug: "tryhackme.com/room/burpsuitebasics", blurb: "Intercept and manipulate web traffic with the industry tool." },
+        { name: "Pickle Rick", diff: "easy", slug: "tryhackme.com/room/picklerick", blurb: "A fan-favorite web CTF — recon, exploit, and three ingredients." }
+      ],
+      stretch: "Tip: run Pickle Rick as a live group solve — it's the perfect confidence-builder to end the session on."
+    },
+
+    {
+      n: 4,
+      file: "week4_briefing.md",
+      tag: "SESSION 04",
+      short: "Root",
+      title: "Exploitation, Privesc &amp; CTF",
+      blurb: "Get a foothold, escalate to root, tour crypto/forensics/OSINT, and finish with a CTF challenge.",
+      goal: "GOAL → complete a full beginner box, foothold to root",
+      slides: [
+        { type: "title", kicker: "Session 04",
+          big: 'From foothold<br>to <span class="accent2">root</span>',
+          sub: "The finale. Today we chain everything together: get in, become the most powerful user on the box, and grab both flags. Then — where you go next." },
+        { kicker: "The Full Tour", title: "The other CTF categories",
+          sub: "You've done recon and web. Here's a lightning tour of the rest, so nothing on a challenge board looks foreign.",
+          kv: [
+            ["crypto", "decode/break weak encryption — base64, ROT, weak hashes"],
+            ["forensics", "extract hidden data from files, images, packet captures"],
+            ["stego", "data hidden inside images/audio — <code>steghide</code>, <code>strings</code>"],
+            ["osint", "find people/info from public sources — a search-engine game"],
+            ["rev / pwn", "reverse-engineer or exploit binaries — the deep end, for later"]
+          ] },
+        { kicker: "Getting In", title: "What is a shell?",
+          sub: "A shell is command-line access to a machine. Getting one on the <i>target</i> is the whole game — it's your foothold.",
+          bullets: [
+            "<b>Reverse shell</b> — you trick the target into connecting <i>back</i> to you. Most common in CTF.",
+            "You set up a <b>listener</b> (<code>nc -lvnp 4444</code>); the exploit makes the target call home.",
+            "<b>Bind shell</b> — the target opens a port and waits for you to connect in.",
+            "Once you have a shell, you're <i>on the box</i> — usually as a low-privilege user. Now you climb."
+          ] },
+        { kicker: "The Easy Button", title: "Metasploit basics",
+          sub: "A framework of ready-made exploits. Great for learning how exploitation works end-to-end.",
+          kv: [
+            ["msfconsole", "launch the framework"],
+            ["search &lt;term&gt;", "find an exploit module (e.g. <code>search eternalblue</code>)"],
+            ["use &lt;module&gt;", "select it"],
+            ["show options", "see what you must set"],
+            ["set RHOSTS ip", "point it at the target · <code>set LHOST</code> = you"],
+            ["exploit", "fire — and catch your shell"]
+          ],
+          callout: { label: "Learn both ways", text: "Metasploit is fast, but also try doing it manually. Understanding <i>why</i> it works beats one-click wins." } },
+        { kicker: "Level Up", title: "Privilege escalation",
+          sub: "You're in as a weak user. Privesc = becoming <code>root</code> (Linux) or <code>Administrator</code> (Windows). Enumerate the system for a mistake to abuse.",
+          bullets: [
+            "<code>whoami</code> &amp; <code>id</code> — who am I, what can I do?",
+            "<code>sudo -l</code> — what am I allowed to run as root? Often a fast win.",
+            "<b>SUID binaries</b> — programs that run as their owner; some can be abused.",
+            "<b>GTFOBins</b> (gtfobins.github.io) — the cheat sheet mapping binaries → escalation tricks.",
+            "Automate the hunt with <b>LinPEAS</b>, but learn to read what it flags."
+          ] },
+        { kicker: "Decode It", title: "Crypto &amp; encoding for CTF",
+          sub: "You'll constantly meet scrambled strings. Know the difference between <b>encoding</b> (reversible) and <b>hashing</b> (one-way).",
+          kv: [
+            ["base64", "reversible encoding — <code>==</code> at the end is a tell"],
+            ["hex / ROT13", "simple reversible transforms"],
+            ["MD5 / SHA", "one-way hashes — you crack, not decode, them"],
+            ["CyberChef", "the \"cyber swiss-army knife\" for decoding chains"],
+            ["hash-identifier", "figure out which hash type you're staring at"],
+            ["John / hashcat", "crack hashes against a wordlist like rockyou.txt"]
+          ] },
+        { kicker: "The Method", title: "Putting it all together",
+          sub: "This is the loop behind almost every box you'll ever root. Four weeks, one methodology.",
+          kv: [
+            ["1· Recon", "Nmap the target — what ports &amp; services? (Week 2)"],
+            ["2· Enumerate", "dig into each service — web, SMB, FTP… (Weeks 2–3)"],
+            ["3· Exploit", "find the way in → get a shell (Weeks 3–4)"],
+            ["4· Privesc", "low-priv user → root/admin (Week 4)"],
+            ["5· Loot", "grab user.txt and root.txt. Flags captured."]
+          ],
+          callout: { label: "Frame every box this way", text: "When you feel lost, you've usually just skipped step 2. Enumerate harder — the answer is almost always already there." } },
+        { kicker: "The Finish Line", title: "Where to go next",
+          sub: "You started four weeks ago not knowing what a terminal was. Now you can root a machine. This is the beginning.",
+          bullets: [
+            "<b>Keep the streak:</b> THM's learning paths (Pre-Security, Jr Penetration Tester) are your roadmap.",
+            "<b>Join us:</b> come to the CTF team — you're ready, and we'd love to have you.",
+            "Go where curiosity pulls: web, forensics, crypto — you now have a foothold in all of it.",
+            "You belong here. Welcome to the team. 🚩"
+          ],
+          callout: { label: "Your call to action", text: "Next CTF team meeting: <b>[date / time / place]</b>. Bring what you built these four weeks." } }
+      ],
+      rooms: [
+        { name: "Metasploit: Introduction", diff: "easy", slug: "tryhackme.com/room/metasploitintro", blurb: "Learn the framework that automates exploitation end-to-end." },
+        { name: "Blue", diff: "easy", slug: "tryhackme.com/room/blue", blurb: "Exploit EternalBlue on Windows — a classic first boot-to-root." },
+        { name: "Vulnversity", diff: "easy", slug: "tryhackme.com/room/vulnversity", blurb: "Capstone: recon → upload exploit → foothold → privesc to root." },
+        { name: "Basic Pentesting", diff: "easy", slug: "tryhackme.com/room/basicpentestingjt", blurb: "Full-methodology box — a perfect end-to-end capstone." },
+        { name: "OhSINT", diff: "easy", slug: "tryhackme.com/room/ohsint", blurb: "OSINT taster: how much can one image reveal about someone?" },
+        { name: "Crypto 101", diff: "easy", slug: "tryhackme.com/module/cryptography", blurb: "Encoding, hashing, and cracking — the crypto category demystified." }
+      ],
+      stretch: "Run the capstone (Vulnversity or Basic Pentesting) as a guided group solve, then send everyone off with the learning-path roadmap."
+    }
+  ];
+
+  var state = { week: 0, slide: 0, seen: {} };
+
+  var el = function (id) { return document.getElementById(id); };
+
+  /* ---- render agenda timeline ---- */
+  (function renderTimeline() {
+    var html = WEEKS.map(function (w) {
+      return '<div class="tl-item">' +
+        '<div class="tl-num">' + w.n + '</div>' +
+        '<div class="tl-body">' +
+          '<div class="wk">Week ' + w.n + '</div>' +
+          '<h3>' + w.title + '</h3>' +
+          '<p>' + w.blurb + '</p>' +
+          '<div class="goal">' + w.goal + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+    el("timeline").innerHTML = html;
+  })();
+
+  /* ---- render tabs ---- */
+  (function renderTabs() {
+    var html = WEEKS.map(function (w, i) {
+      return '<button class="tab" role="tab" data-i="' + i + '" aria-selected="' + (i === 0) + '">' +
+        '<span class="tnum">0' + w.n + '</span> · ' + w.short + '</button>';
+    }).join("");
+    el("tabs").innerHTML = html;
+    el("tabs").addEventListener("click", function (e) {
+      var b = e.target.closest(".tab");
+      if (!b) return;
+      selectWeek(parseInt(b.getAttribute("data-i"), 10));
+    });
+  })();
+
+  function slideMarkup(s) {
+    if (s.type === "title") {
+      return '<div class="slide title-slide">' +
+        '<div class="kicker">' + s.kicker + '</div>' +
+        '<div class="big">' + s.big + '</div>' +
+        (s.sub ? '<p class="sub" style="margin-top:22px">' + s.sub + '</p>' : '') +
+      '</div>';
+    }
+    var body = '';
+    if (s.sub) body += '<p class="sub">' + s.sub + '</p>';
+    if (s.bullets) {
+      body += '<ul>' + s.bullets.map(function (b) { return '<li>' + b + '</li>'; }).join("") + '</ul>';
+    }
+    if (s.kv) {
+      body += '<div class="kv">' + s.kv.map(function (r) {
+        return '<div><span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span></div>';
+      }).join("") + '</div>';
+    }
+    if (s.cols) {
+      body += '<div class="cols">' +
+        '<div><div class="kicker" style="color:var(--fg-faint);margin-bottom:12px">' + s.colA.h + '</div><ul>' +
+          s.colA.bullets.map(function (b) { return '<li>' + b + '</li>'; }).join("") + '</ul></div>' +
+        '<div><div class="kicker" style="color:var(--fg-faint);margin-bottom:12px">' + s.colB.h + '</div><ul>' +
+          s.colB.bullets.map(function (b) { return '<li>' + b + '</li>'; }).join("") + '</ul></div>' +
+      '</div>';
+    }
+    if (s.callout) {
+      body += '<div class="callout"><b>' + s.callout.label + '</b>' + s.callout.text + '</div>';
+    }
+    return '<div class="slide">' +
+      '<div class="kicker">' + s.kicker + '</div>' +
+      '<h3 class="stitle">' + s.title + '</h3>' +
+      body +
+    '</div>';
+  }
+
+  function renderDeck() {
+    var w = WEEKS[state.week];
+    el("deckFile").textContent = w.file;
+    el("deckTag").textContent = w.tag;
+    el("slides").innerHTML = w.slides.map(slideMarkup).join("");
+    showSlide(0);
+  }
+
+  function renderRooms() {
+    var w = WEEKS[state.week];
+    el("roomsTitle").textContent = "Week " + w.n + " · assigned rooms";
+    var html = w.rooms.map(function (r) {
+      return '<a class="room" href="https://' + r.slug + '" target="_blank" rel="noopener">' +
+        '<div class="room-top"><span class="room-name">' + r.name + '</span>' +
+        '<span class="diff ' + r.diff + '">' + r.diff + '</span></div>' +
+        '<p class="room-blurb">' + r.blurb + '</p>' +
+        '<div class="room-slug">↗ ' + r.slug + '</div>' +
+      '</a>';
+    }).join("");
+    el("rooms").innerHTML = html;
+    el("stretchNote").textContent = w.stretch || "";
+  }
+
+  function showSlide(i) {
+    var w = WEEKS[state.week];
+    var total = w.slides.length;
+    if (i < 0) i = 0;
+    if (i > total - 1) i = total - 1;
+    state.slide = i;
+    if (!state.seen[state.week]) state.seen[state.week] = {};
+    state.seen[state.week][i] = true;
+
+    var nodes = el("slides").querySelectorAll(".slide");
+    nodes.forEach(function (n, idx) { n.classList.toggle("active", idx === i); });
+
+    el("slideCount").textContent = pad(i + 1) + " / " + pad(total);
+    el("prevBtn").disabled = (i === 0);
+    el("nextBtn").disabled = (i === total - 1);
+
+    var seen = state.seen[state.week] || {};
+    el("progress").innerHTML = w.slides.map(function (_, idx) {
+      var cls = idx === i ? "on" : (seen[idx] ? "seen" : "");
+      return '<i data-s="' + idx + '" class="' + cls + '"></i>';
+    }).join("");
+  }
+
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+  function selectWeek(i) {
+    state.week = i;
+    Array.prototype.forEach.call(el("tabs").querySelectorAll(".tab"), function (t, idx) {
+      t.setAttribute("aria-selected", idx === i);
+    });
+    renderDeck();
+    renderRooms();
+    document.getElementById("sessions").scrollIntoView({ behavior: prefersReduced() ? "auto" : "smooth", block: "start" });
+  }
+
+  function prefersReduced() {
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  /* ---- controls ---- */
+  el("prevBtn").addEventListener("click", function () { showSlide(state.slide - 1); });
+  el("nextBtn").addEventListener("click", function () { showSlide(state.slide + 1); });
+  el("progress").addEventListener("click", function (e) {
+    var dot = e.target.closest("i");
+    if (dot) showSlide(parseInt(dot.getAttribute("data-s"), 10));
+  });
+
+  function isPresenting() {
+    return document.fullscreenElement === el("deckFrame") || el("deckFrame").classList.contains("presenting");
+  }
+  function enterFaux() {
+    el("deckFrame").classList.add("presenting");
+    setPresentLabel(true);
+  }
+  function exitPresent() {
+    var frame = el("deckFrame");
+    frame.classList.remove("presenting");
+    if (document.fullscreenElement) {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    }
+    setPresentLabel(false);
+  }
+  function setPresentLabel(on) {
+    el("presentBtn").textContent = on ? "✕ Exit" : "⛶ Present";
+  }
+
+  el("presentBtn").addEventListener("click", function () {
+    var frame = el("deckFrame");
+    if (isPresenting()) { exitPresent(); return; }
+    var req = frame.requestFullscreen || frame.webkitRequestFullscreen;
+    if (req) {
+      try {
+        var p = req.call(frame);
+        if (p && typeof p.then === "function") {
+          p.then(function () { setPresentLabel(true); }).catch(function () { enterFaux(); });
+        } else {
+          // No promise returned — verify shortly, fall back if it didn't take.
+          setTimeout(function () { if (!document.fullscreenElement) enterFaux(); else setPresentLabel(true); }, 120);
+        }
+      } catch (e) { enterFaux(); }
+    } else {
+      enterFaux();
+    }
+  });
+
+  document.addEventListener("fullscreenchange", function () {
+    if (!document.fullscreenElement) setPresentLabel(el("deckFrame").classList.contains("presenting"));
+    else setPresentLabel(true);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    var tag = (e.target && e.target.tagName) || "";
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    if (e.key === "ArrowRight" || e.key === "PageDown") { showSlide(state.slide + 1); e.preventDefault(); }
+    else if (e.key === "ArrowLeft" || e.key === "PageUp") { showSlide(state.slide - 1); e.preventDefault(); }
+    else if (e.key === "Escape" && el("deckFrame").classList.contains("presenting")) { exitPresent(); e.preventDefault(); }
+  });
+
+  /* ---- theme toggle ---- */
+  el("themeBtn").addEventListener("click", function () {
+    var root = document.documentElement;
+    var cur = root.getAttribute("data-theme");
+    var isDark;
+    if (cur) { isDark = cur === "dark"; }
+    else { isDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches; }
+    root.setAttribute("data-theme", isDark ? "light" : "dark");
+  });
+
+  /* ---- init ---- */
+  renderDeck();
+  renderRooms();
+})();
+</script>

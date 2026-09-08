@@ -559,8 +559,8 @@
       blurb: "Learn how networks talk, what ports and services are, and how to map a target with Nmap.",
       goal: "GOAL → enumerate a target and read its open doors",
       slides: [
-        { type: "title", kicker: "Session 02",
-          big: 'You can\'t hack what you<br>can\'t <span class="accent2">see</span>',
+        { kicker: "Session 02",
+          title: 'You can\'t hack what you<br>can\'t <span class="accent2">see</span>',
           sub: "Before any exploit comes reconnaissance. Today: how machines talk to each other, and how to knock on every door a target has open." },
         { kicker: "The Basics", title: "How networks talk",
           sub: "Every machine on a network has an <b>address</b>, and every service on it listens on a numbered <b>port</b>.",
@@ -637,9 +637,9 @@
         { name: "What is Networking?", diff: "info", slug: "tryhackme.com/room/whatisnetworking", blurb: "The absolute basics of how devices connect and communicate." },
         { name: "Intro to LAN", diff: "easy", slug: "tryhackme.com/room/introtolan", blurb: "Local networks, subnets, and how devices find each other." },
         { name: "Network Services", diff: "easy", slug: "tryhackme.com/room/networkservices", blurb: "Enumerate and exploit SMB, Telnet, and FTP hands-on." },
-        { name: "Nmap", diff: "medium", slug: "tryhackme.com/room/furthernmap", blurb: "The definitive beginner Nmap room — scan types, flags, output." }
+        { name: "Nmap", diff: "medium", slug: "tryhackme.com/room/furthernmap", blurb: "The definitive beginner Nmap room — scan types, flags, output." },
+        { name: "Passive Reconnaissance", diff: "optional", slug: "tryhackme.com/room/passiverecon", blurb: "WHOIS, dig, and gathering intel without touching the target." },
       ],
-      stretch: "Stretch: Passive Reconnaissance · tryhackme.com/room/passiverecon — whois, dig, and gathering intel without touching the target."
     },
 
     {
@@ -651,8 +651,8 @@
       blurb: "How the web really works, walking an application, content discovery, the OWASP Top 10, and Burp Suite.",
       goal: "GOAL → find and exploit a real web vulnerability",
       slides: [
-        { type: "title", kicker: "Session 03",
-          big: 'The web is the biggest<br><span class="accent2">attack surface</span> there is',
+        { kicker: "Session 03",
+          title: 'The web is the biggest<br><span class="accent2">attack surface</span> there is',
           sub: "Most CTF flags — and most real breaches — start with a website. Today we learn how the web works under the hood, then break one." },
         { kicker: "Under the Hood", title: "How the web actually works",
           sub: "Every page you load is a <b>request</b> from your browser and a <b>response</b> from a server. Hacking the web means bending that conversation.",
@@ -732,7 +732,6 @@
         { name: "Burp Suite: The Basics", diff: "easy", slug: "tryhackme.com/room/burpsuitebasics", blurb: "Intercept and manipulate web traffic with the industry tool." },
         { name: "Pickle Rick", diff: "easy", slug: "tryhackme.com/room/picklerick", blurb: "A fan-favorite web CTF — recon, exploit, and three ingredients." }
       ],
-      stretch: "Tip: run Pickle Rick as a live group solve — it's the perfect confidence-builder to end the session on."
     },
 
     {
@@ -744,8 +743,8 @@
       blurb: "Get a foothold, escalate to root, tour crypto/forensics/OSINT, and finish with a CTF challenge.",
       goal: "GOAL → complete a full beginner box, foothold to root",
       slides: [
-        { type: "title", kicker: "Session 04",
-          big: 'From foothold<br>to <span class="accent2">root</span>',
+        { kicker: "Session 04",
+          title: 'From foothold<br>to <span class="accent2">root</span>',
           sub: "The finale. Today we chain everything together: get in, become the most powerful user on the box, and grab both flags. Then — where you go next." },
         { kicker: "The Full Tour", title: "The other CTF categories",
           sub: "You've done recon and web. Here's a lightning tour of the rest, so nothing on a challenge board looks foreign.",
@@ -797,10 +796,10 @@
         { kicker: "The Method", title: "Putting it all together",
           sub: "This is the loop behind almost every box you'll ever root. Four weeks, one methodology.",
           kv: [
-            ["1· Recon", "Nmap the target — what ports &amp; services? (Week 2)"],
-            ["2· Enumerate", "dig into each service — web, SMB, FTP… (Weeks 2–3)"],
-            ["3· Exploit", "find the way in → get a shell (Weeks 3–4)"],
-            ["4· Privesc", "low-priv user → root/admin (Week 4)"],
+            ["1· Recon", "Nmap the target — what ports &amp; services?"],
+            ["2· Enumerate", "dig into each service — web, SMB, FTP… "],
+            ["3· Exploit", "find the way in → get a shell"],
+            ["4· Privesc", "low-priv user → root/admin"],
             ["5· Loot", "grab user.txt and root.txt. Flags captured."]
           ],
           callout: { label: "Frame every box this way", text: "When you feel lost, you've usually just skipped step 2. Enumerate harder — the answer is almost always already there." } },
@@ -812,17 +811,17 @@
             "Go where curiosity pulls: web, forensics, crypto — you now have a foothold in all of it.",
             "You belong here. Welcome to the team. 🚩"
           ],
-          callout: { label: "Your call to action", text: "Next CTF team meeting: <b>[date / time / place]</b>. Bring what you built these four weeks." } }
+          callout: { label: "Your call to action", text: "CTF team meeting: <b>[Friday / 3pm / Evans Hall - Cyber Range]</b>. Bring what you built these four weeks." } }
       ],
       rooms: [
         { name: "Metasploit: Introduction", diff: "easy", slug: "tryhackme.com/room/metasploitintro", blurb: "Learn the framework that automates exploitation end-to-end." },
         { name: "Blue", diff: "easy", slug: "tryhackme.com/room/blue", blurb: "Exploit EternalBlue on Windows — a classic first boot-to-root." },
-        { name: "Vulnversity", diff: "easy", slug: "tryhackme.com/room/vulnversity", blurb: "Capstone: recon → upload exploit → foothold → privesc to root." },
-        { name: "Basic Pentesting", diff: "easy", slug: "tryhackme.com/room/basicpentestingjt", blurb: "Full-methodology box — a perfect end-to-end capstone." },
+        { name: "Vulnversity", diff: "easy", slug: "tryhackme.com/room/vulnversity", blurb: "Recon → upload exploit → foothold → privesc to root." },
+        { name: "Basic Pentesting", diff: "easy", slug: "tryhackme.com/room/basicpentestingjt", blurb: "Full-methodology box — a perfect end-to-end." },
         { name: "OhSINT", diff: "easy", slug: "tryhackme.com/room/ohsint", blurb: "OSINT taster: how much can one image reveal about someone?" },
-        { name: "Crypto 101", diff: "easy", slug: "tryhackme.com/module/cryptography", blurb: "Encoding, hashing, and cracking — the crypto category demystified." }
+        { name: "Crypto 101", diff: "easy", slug: "tryhackme.com/module/cryptography", blurb: "Encoding, hashing, and cracking — the crypto category demystified." },
+        { name: "Forensics 101", diff: "easy", slug: "tryhackme.com/module/forensics", blurb: "Extracting hidden data from files, images, and packet captures." }
       ],
-      stretch: "Run the capstone (Vulnversity or Basic Pentesting) as a guided group solve, then send everyone off with the learning-path roadmap."
     }
   ];
 
